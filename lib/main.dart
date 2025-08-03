@@ -1,7 +1,8 @@
 // lib/main.dart
 import 'package:bujo/models/habit_model.dart';
 import 'package:bujo/models/task_model.dart';
-import 'package:bujo/providers/habit_provider.dart'; // Import HabitProvider
+import 'package:bujo/models/priority.dart';
+import 'package:bujo/providers/habit_provider.dart';
 import 'package:bujo/providers/task_provider.dart';
 import 'package:bujo/screens/main_screen.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ void main() async {
 
   Hive.registerAdapter(TaskAdapter());
   Hive.registerAdapter(HabitAdapter());
+  Hive.registerAdapter(PriorityAdapter());
 
   await Hive.openBox<Task>('tasks');
   await Hive.openBox<Habit>('habits');

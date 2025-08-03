@@ -109,4 +109,22 @@ class HabitProvider extends ChangeNotifier {
     }
     return longestStreak;
   }
+
+  void toggleHabitCompletionForDate(Habit habit, DateTime date) {
+    final dateOnly = DateUtils.dateOnly(date);
+
+    if (habit.completedDates.contains(dateOnly)) {
+      habit.completedDates.remove(dateOnly);
+    } else {
+      habit.completedDates.add(dateOnly);
+    }
+
+    // Also update the main 'isCompleted' flag if the toggled date is today
+    if (isSameDay(dateOnly, DateTime.now())) {
+      habit.isCompleted = _isHabitCompletedToday(habit);
+    }
+
+    habit.save();
+    notifyListeners();
+  }
 }

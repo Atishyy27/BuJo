@@ -1,5 +1,6 @@
 // lib/models/task_model.dart
 import 'package:hive/hive.dart';
+import 'priority.dart'; // Import our new enum
 
 part 'task_model.g.dart';
 
@@ -14,9 +15,14 @@ class Task extends HiveObject {
   @HiveField(2)
   bool isCompleted;
 
+  // --- NEW FIELD ---
+  @HiveField(3)
+  Priority priority;
+
   Task({
     required this.title,
     required this.description,
     this.isCompleted = false,
+    this.priority = Priority.medium, // Default to medium
   });
 }

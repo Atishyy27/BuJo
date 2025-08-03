@@ -1,3 +1,4 @@
+// lib/screens/habits_screen.dart
 import 'package:bujo/models/habit_model.dart';
 import 'package:bujo/providers/habit_provider.dart';
 import 'package:flutter/material.dart';
@@ -38,11 +39,10 @@ class _HabitsScreenState extends State<HabitsScreen> {
   Widget build(BuildContext context) {
     final habitProvider = Provider.of<HabitProvider>(context);
 
-    // After a build, if no habit is selected (e.g., first run), select the first one.
     if (_selectedHabit == null && habitProvider.habits.isNotEmpty) {
       _selectedHabit = habitProvider.habits.first;
     }
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(_selectedHabit == null ? 'My Habits' : _selectedHabit!.name),
@@ -57,11 +57,18 @@ class _HabitsScreenState extends State<HabitsScreen> {
             availableCalendarFormats: const {CalendarFormat.month: 'Month'},
             eventLoader: _getEventsForDay,
             selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+            
+            // --- MODIFIED: The onDaySelected callback ---
             onDaySelected: (selectedDay, focusedDay) {
               setState(() {
                 _selectedDay = selectedDay;
                 _focusedDay = focusedDay;
               });
+
+              // If a habit is selected, toggle its completion for the tapped day
+              if (_selectedHabit != null) {
+                habitProvider.toggleHabitCompletionForDate(_selectedHabit!, selectedDay);
+              }
             },
             calendarStyle: const CalendarStyle(
               todayDecoration: BoxDecoration(color: Colors.blueGrey, shape: BoxShape.circle),
@@ -69,8 +76,6 @@ class _HabitsScreenState extends State<HabitsScreen> {
               markerDecoration: BoxDecoration(color: Colors.greenAccent, shape: BoxShape.circle),
             ),
           ),
-
-          // --- NEW: Stats Card for Streaks ---
           if (_selectedHabit != null)
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -82,9 +87,7 @@ class _HabitsScreenState extends State<HabitsScreen> {
                 ],
               ),
             ),
-          
           const Divider(),
-
           Expanded(
             child: ListView.builder(
               itemCount: habitProvider.habits.length,
@@ -121,14 +124,10 @@ class _HabitsScreenState extends State<HabitsScreen> {
     );
   }
 
-  // --- NEW: Helper widget for the stats card ---
   Widget _buildStatCard(String title, int count) {
     return Column(
       children: [
-        Text(
-          count.toString(),
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
+        Text(count.toString(), style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
         Text(title),
       ],
     );
@@ -138,30 +137,31 @@ class _HabitsScreenState extends State<HabitsScreen> {
     final nameController = TextEditingController();
     final descriptionController = TextEditingController();
     showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Add a New Habit'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(controller: nameController, autofocus: true, decoration: const InputDecoration(labelText: 'Habit Name')),
-                TextField(controller: descriptionController, decoration: const InputDecoration(labelText: 'Description')),
-              ],
-            ),
-            actions: [
-              TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-              ElevatedButton(
-                onPressed: () {
-                  if (nameController.text.isNotEmpty) {
-                    provider.addHabit(nameController.text, descriptionController.text);
-                    Navigator.pop(context);
-                  }
-                },
-                child: const Text('Add'),
-              ),
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Add a New Habit'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(controller: nameController, autofocus: true, decoration: const InputDecoration(labelText: 'Habit Name')),
+              TextField(controller: descriptionController, decoration: const InputDecoration(labelText: 'Description')),
             ],
-          );
-        });
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+            ElevatedButton(
+              onPressed: () {
+                if (nameController.text.isNotEmpty) {
+                  provider.addHabit(nameController.text, descriptionController.text);
+                  Navigator.pop(context);
+                }
+              },
+              child: const Text('Add'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
