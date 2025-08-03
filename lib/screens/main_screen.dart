@@ -2,7 +2,7 @@
 import 'package:bujo/screens/courses_screen.dart'; // Import the new screen
 import 'package:bujo/screens/focus_screen.dart';
 import 'package:bujo/screens/habits_screen.dart';
-import 'package:bujo/screens/tasks_screen.dart';
+import 'package:bujo/screens/task_screen.dart';
 import 'package:flutter/material.dart';
 
 class MainScreen extends StatefulWidget {

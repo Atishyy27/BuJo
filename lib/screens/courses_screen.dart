@@ -1,6 +1,6 @@
 // lib/screens/courses_screen.dart
 import 'dart:convert';
-import 'package.flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class CoursesScreen extends StatefulWidget {
@@ -18,7 +18,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
 
   Future<void> _fetchPlaylistVideos() async {
     // --- IMPORTANT: Paste your API Key here ---
-    final String apiKey = 'YOUR_API_KEY_HERE';
+    final String apiKey = 'AIzaSyDpAEm4QqDPeCF2oAOJ8WfLiyv2k5BHbO0';
     // -----------------------------------------
 
     if (_urlController.text.isEmpty) return;
